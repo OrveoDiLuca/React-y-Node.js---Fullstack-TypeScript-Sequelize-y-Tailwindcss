@@ -1,8 +1,16 @@
-import {useNavigate } from "react-router-dom"
+import {Form, useNavigate, type ActionFunctionArgs, redirect } from "react-router-dom"
 import type { Product } from "../types"
+import { deleteProduct } from "../services/ProductService"
 
 type ProductDetailsProps = {
     product: Product
+}
+
+export async function action({params}: ActionFunctionArgs) {
+    if(params.id !== undefined){
+        await deleteProduct(+params.id)
+        return redirect('/')
+    }
 }
 
 export default function ProductDetails({product} : ProductDetailsProps) {
@@ -22,9 +30,24 @@ export default function ProductDetails({product} : ProductDetailsProps) {
             <div className="flex gap-2 items-center">
                 <button 
                     onClick={() => navigate(`/productos/${product.id}/editar`)}
-                    className="hover:cursor-pointer bg-indigo-600 text-white rounded-lg w-full p-2 uppercase font-bold text-xs text-center">
+                    className="hover:cursor-pointer bg-indigo-600 text-white rounded-lg w-full p-2 uppercase font-bold text-xs text-center hover:bg-indigo-500">
                         Editar
                 </button>
+                <Form 
+                className="w-full" 
+                method="POST" 
+                action= {`/productos/${product.id}/eliminar`} 
+                onSubmit={(e) => {
+                    if(!confirm('¿Eliminar?')){
+                        e.preventDefault()
+                    }
+                }}>
+                    <input
+                        type="submit"
+                        value="Eliminar"
+                        className="hover:cursor-pointer bg-red-600 text-white rounded-lg w-full p-2 uppercase font-bold text-xs text-center hover:bg-red-500"
+                    />
+                </Form>
             </div>
             </td>
         </tr> 
