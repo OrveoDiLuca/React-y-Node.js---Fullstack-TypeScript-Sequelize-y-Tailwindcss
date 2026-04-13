@@ -1,5 +1,5 @@
 //Interactua con la api. 
-import {DraftProductSchema, ProductsSchema} from '../types/index'
+import {DraftProductSchema, ProductsSchema, type Product, ProductSchema} from '../types/index'
 import axios from 'axios'
 import { safeParse } from 'valibot'
 
@@ -33,6 +33,21 @@ export async function getProducts(){
         const url = `${import.meta.env.VITE_API_URL}/api/products`
         const {data} = await axios.get(url)
         const result = safeParse(ProductsSchema, data.data)
+        if(result.success){
+            return result.output
+        }else{
+            throw new Error('Hubo un error...')
+        }
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+export async function getProductById(id : Product['id']){
+    try {
+        const url = `${import.meta.env.VITE_API_URL}/api/products/${id}`
+        const {data} = await axios.get(url)
+        const result = safeParse(ProductSchema, data.data)
         if(result.success){
             return result.output
         }else{
